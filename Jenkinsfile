@@ -6,6 +6,13 @@ pipeline {
     }
 
     stages {
+    
+    stage('Cloning Git') {
+      steps {
+        git url: 'https://github.com/diegoesp89/spring-boot-kubernetes.git',
+            credentialsId: 'diegoesp89'
+      }
+    }
       stage ('Initial') {
             steps {
               echo '========================================='
