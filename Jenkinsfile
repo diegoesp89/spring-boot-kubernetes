@@ -92,17 +92,7 @@ pipeline {
       }
     }
 
-    stage('Scan Docker') {
-      steps {
-        figlet 'Scan Docker'
-        script {
-          //def imageLine = 'debian:latest', mongo:3.2.1, node:10
-          def imageLine = 'mongo:3.2.1'
-          writeFile file: 'anchore_images', text: imageLine
-          anchore 'anchore_images'
-        }
-      }
-    }
+   
 
   }
 }
