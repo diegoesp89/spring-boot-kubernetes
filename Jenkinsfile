@@ -24,20 +24,22 @@ pipeline {
                '''
             }
         }
-    
-
-        stage('SonarQube analysis') {
+    stage('SonarQube analysis') {
            steps{
-               echo '========================================='
-              echo '                SONARQUBE '
-              echo '========================================='
                 script {
-                    def scannerHome = tool 'SonarQube Scanner';//def scannerHome = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    def scannerHome = tool 'SonarQube';
                     withSonarQubeEnv('Sonar Server') {
-                      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=Ms-Maven -Dsonar.sources=target/ -Dsonar.host.url=http://172.18.0.3:9000 -Dsonar.login=14c09fa032024d6f0e5923c7cead79f0bcaa23f3"
+                      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=ejerciciodevop -Dsonar.host.url=http://localhost:9000 -Dsonar.login=665ee488b3cf9d3190b0c9f0f81fa261cbe075fe"
+
                     }
                 }
            }
         }
+
+
+     
     }
 }
+
+
+
