@@ -24,6 +24,24 @@ pipeline {
                '''
             }
         }
+        
+         stage ('Compile') {
+            steps {
+                echo '========================================='
+                echo '                COMPILE '
+                echo '========================================='
+                 sh 'mvn clean compile -e'
+            }
+        }
+        stage ('Test') {
+            steps {
+                echo '========================================='
+                echo '                TEST '
+                echo '========================================='
+                 sh 'mvn clean test -e'
+            }
+        }
+
     stage('SonarQube analysis') {
            steps{
                 script {
