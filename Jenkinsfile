@@ -56,14 +56,56 @@ pipeline {
       }
     }
 
-    stage('OWASP Dependency-Check Vulnerabilities') {
+    stage('SCA') {
       steps {
-        dependencyCheck additionalArguments: ''
-        ' -o "./" -s "./" -f "ALL" --prettyPrint'
-        '', odcInstallation: 'OWASP-DC'
-        dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+        sh 'mvn org.owasp:dependency-check-maven:check'
+        dependencyCheckPublisher failedNewCritical: 5, failedTotalCritical: 10, pattern: 'target/dad.xml', unstableNewCritical: 3, unstableTotalCritical: 5
+      }
+    }
+
+    stage('ZAP') {
+      steps {
+        script {
+          env.DOCKER = tool "Docker"
+          env.DOCKER_EXEC = "${DOCKER}/bin/docker"
+          env.TARGET = 'http://zero.webappsecurity.com'
+
+          sh '${DOCKER_EXEC} rm -f zap2'
+          sh '${DOCKER_EXEC} pull owasp/zap2docker-stable'
+          sh '${DOCKER_EXEC} run --add-host="localhost:192.168.100.4" --rm -e LC_ALL=C.UTF-8 -e LANG=C.UTF-8 --name zap2 -u zap -p 8090:8080 -d owasp/zap2docker-stable zap.sh -daemon -port 8080 -host 0.0.0.0 -config api.disablekey=true'
+          sh '${DOCKER_EXEC} run --add-host="localhost:192.168.100.4" -v /Users/asajuro/Documents/BCI/AnalyzeQAS/Jenkins-Practica/USACH/Dockerfile/zap/jenkins_home/tools:/zap/wrk/:rw --rm -i owasp/zap2docker-stable zap-baseline.py -t "https://demo.testfire.net/" -I -r zap_baseline_report2.html -l PASS'
+        }
+      }
+    }
+
+    stage('Publish') {
+      steps {
+        publishHTML([
+          allowMissing: false,
+          alwaysLinkToLastBuild: false,
+          keepAll: false,
+          reportDir: '/var/jenkins_home/tools',
+          reportFiles: 'zap_baseline_report2.html',
+          reportName: 'HTML Report',
+          reportTitles: ''
+        ])
+      }
+    }
+
+    stage('Scan Docker') {
+      steps {
+        figlet 'Scan Docker'
+        script {
+          //def imageLine = 'debian:latest', mongo:3.2.1, node:10
+          def imageLine = 'mongo:3.2.1'
+          writeFile file: 'anchore_images', text: imageLine
+          anchore 'anchore_images'
+        }
       }
     }
 
   }
 }
+
+
+
