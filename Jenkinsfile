@@ -9,8 +9,11 @@ pipeline {
     
     stage('Cloning Git') {
       steps {
-        git url: 'https://github.com/diegoesp89/spring-boot-kubernetes.git',
-            credentialsId: 'diegoesp89'
+           echo '========================================='
+                echo '                CLONE GIT '
+                echo '========================================='
+       // git url: 'https://github.com/diegoesp89/spring-boot-kubernetes.git',
+       //     credentialsId: 'diegoesp89'
       }
     }
               
@@ -19,7 +22,7 @@ pipeline {
                 echo '========================================='
                 echo '                COMPILE '
                 echo '========================================='
-                 sh 'mvn clean compile -e'
+                // sh 'mvn clean compile -e'
             }
         }
         stage ('Test') {
@@ -27,7 +30,7 @@ pipeline {
                 echo '========================================='
                 echo '                TEST '
                 echo '========================================='
-                 sh 'mvn clean test -e'
+               //  sh 'mvn clean test -e'
             }
         }
 
@@ -36,7 +39,7 @@ pipeline {
                 script {
                     def scannerHome = tool 'SonarQube';
                     withSonarQubeEnv('SonarQube') {
-                      sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=/var/snap/jenkins/2126/workspace/tareadevsecops_master/target/classes -Dsonar.projectKey=ejerciciodevop -Dsonar.host.url=http://localhost:9000 -Dsonar.login=665ee488b3cf9d3190b0c9f0f81fa261cbe075fe"
+                     // sh "${scannerHome}/bin/sonar-scanner -Dsonar.java.binaries=/var/snap/jenkins/2126/workspace/tareadevsecops_master/target/classes -Dsonar.projectKey=ejerciciodevop -Dsonar.host.url=http://localhost:9000 -Dsonar.login=665ee488b3cf9d3190b0c9f0f81fa261cbe075fe"
 
                     }
                 }
@@ -45,8 +48,8 @@ pipeline {
 
 stage ('SCA') {
             steps {
-                 sh 'mvn org.owasp:dependency-check-maven:check'
-                dependencyCheckPublisher failedNewCritical: 5, failedTotalCritical: 10, pattern: 'target/dad.xml', unstableNewCritical: 3, unstableTotalCritical: 5
+               //  sh 'mvn org.owasp:dependency-check-maven:check'
+             //   dependencyCheckPublisher failedNewCritical: 5, failedTotalCritical: 10, pattern: 'target/dad.xml', unstableNewCritical: 3, unstableTotalCritical: 5
             }
         }
         
