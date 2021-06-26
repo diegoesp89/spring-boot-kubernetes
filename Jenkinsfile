@@ -13,19 +13,6 @@ pipeline {
           credentialsId: 'diegoesp89'
       }
     }
-    stage('Initial') {
-      steps {
-        echo '========================================='
-        echo '                INITIAL '
-        echo '========================================='
-        sh ''
-        '
-        echo "PATH = ${PATH}"
-        echo "M2_HOME = ${M2_HOME}"
-        ''
-        '
-      }
-    }
 
     stage('Compile') {
       steps {
